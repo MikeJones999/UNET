@@ -32,7 +32,7 @@ public class Player_NetworkSetup : NetworkBehaviour {
             //enable Audio listener on the FirstPersonCharacter controller
             audioListener.enabled = true;
 
-            //18.35 minutes in
+           
         }
 
 	}

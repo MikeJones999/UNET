@@ -14,6 +14,11 @@ public class Player_SyncRotation : NetworkBehaviour
     [SerializeField]    private Transform camTransform;
     [SerializeField]    private float lerpRate = 15;
 
+    //this holds the players last rotation - used to update network only when player has moved 5 degrees.
+    private Quaternion lastPlayerRot;
+    private Quaternion lastCamRot;
+    private float threshold = 5.0f; //degrees
+
     void FixedUpdate()
     {
         TransmitRotation();
@@ -46,11 +51,18 @@ public class Player_SyncRotation : NetworkBehaviour
     [Client]
     void TransmitRotation()
     {
-        if(isLocalPlayer)
+        //ensure isLocal player data being sent & only when the rotation of the player or cam is 5 degrees since last rotation
+        if (isLocalPlayer)
         {
-            //provide my rotations to the server
-            CmdProvideRotationToServer(playerTransform.rotation, camTransform.rotation);
-        }
+            if(Quaternion.Angle(playerTransform.rotation, lastPlayerRot) > threshold || Quaternion.Angle(camTransform.rotation, lastCamRot) > threshold)
+            {
+                //provide my rotations to the server
+                CmdProvideRotationToServer(playerTransform.rotation, camTransform.rotation);
+
+                //update current rotations of player and cam
+                lastPlayerRot = playerTransform.rotation;
+                lastCamRot = camTransform.rotation;
+            }
     }
 
 }
