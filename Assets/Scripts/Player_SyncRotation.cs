@@ -7,12 +7,17 @@ public class Player_SyncRotation : NetworkBehaviour
 
     //These variables will have their values sychronized from the server to clients in the game that are in the ready state. 
     //[SyncVar] marks it as dirty, so it will be sent to clients at the end of the current frame. Only simple values can be marked as [SyncVars].
-    [SyncVar]    private Quaternion syncPlayerRotation;
-    [SyncVar]    private Quaternion syncCamRotation;
+    [SyncVar]
+    private Quaternion syncPlayerRotation;
+    [SyncVar]
+    private Quaternion syncCamRotation;
 
-    [SerializeField]   private Transform playerTransform;
-    [SerializeField]    private Transform camTransform;
-    [SerializeField]    private float lerpRate = 15;
+    [SerializeField]
+    private Transform playerTransform;
+    [SerializeField]
+    private Transform camTransform;
+    [SerializeField]
+    private float lerpRate = 15;
 
     //this holds the players last rotation - used to update network only when player has moved 5 degrees.
     private Quaternion lastPlayerRot;
@@ -41,6 +46,8 @@ public class Player_SyncRotation : NetworkBehaviour
         }
     }
 
+
+    //client tells server to run this command - require Cmd infront of method/function name
     [Command]
     void CmdProvideRotationToServer(Quaternion playerRotate, Quaternion camRotate)
     {
@@ -54,7 +61,7 @@ public class Player_SyncRotation : NetworkBehaviour
         //ensure isLocal player data being sent & only when the rotation of the player or cam is 5 degrees since last rotation
         if (isLocalPlayer)
         {
-            if(Quaternion.Angle(playerTransform.rotation, lastPlayerRot) > threshold || Quaternion.Angle(camTransform.rotation, lastCamRot) > threshold)
+            if (Quaternion.Angle(playerTransform.rotation, lastPlayerRot) > threshold || Quaternion.Angle(camTransform.rotation, lastCamRot) > threshold)
             {
                 //provide my rotations to the server
                 CmdProvideRotationToServer(playerTransform.rotation, camTransform.rotation);
@@ -63,6 +70,7 @@ public class Player_SyncRotation : NetworkBehaviour
                 lastPlayerRot = playerTransform.rotation;
                 lastCamRot = camTransform.rotation;
             }
-    }
+        }
 
+    }
 }
