@@ -16,11 +16,19 @@ public class Player_SyncPosition : NetworkBehaviour {
     private Vector3 lastPos;
     private float threshold = 0.4f;
 
+
+    void Update()
+    {
+        //lerping need to be called from here otherwise in fixedupdate it remains the same which causes slow movement
+        //on sime an fast on others
+        LerpPosition();
+    }
+
+
     //Fixed upate to reduce the number of times information is sent over network
     void FixedUpdate()
     {
         TransmitPosition();
-        LerpPosition();
     }
 
 

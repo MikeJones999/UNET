@@ -24,10 +24,14 @@ public class Player_SyncRotation : NetworkBehaviour
     private Quaternion lastCamRot;
     private float threshold = 5.0f; //degrees
 
+    void Update()
+    {
+        LerpRotations();
+    }
+
     void FixedUpdate()
     {
-        TransmitRotation();
-        LerpRotations();
+        TransmitRotation();    
     }
 
 
@@ -39,6 +43,7 @@ public class Player_SyncRotation : NetworkBehaviour
         {
             //Players rotation across network smoothly
             //from player rotation to syncplayerRotation - by time.deltatime
+            //lerping - moving a percentage of the remaining distance of the target, which gets shorter and shorter as the movement and frame continue. 
             playerTransform.rotation = Quaternion.Lerp(playerTransform.rotation, syncPlayerRotation, Time.deltaTime * lerpRate);
 
             //cams rotation across network
