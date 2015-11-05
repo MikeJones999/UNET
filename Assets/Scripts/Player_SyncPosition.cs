@@ -2,7 +2,9 @@
 using System.Collections;
 using UnityEngine.Networking;
 
-public class Player_SyncPosition : NetworkBehaviour {
+[NetworkSettings(channel = 0, sendInterval = 0.033f)]
+public class Player_SyncPosition : NetworkBehaviour
+{
 
     //variable gets synched across network - Server automatically transmit this value to all clients upon changing
     [SyncVar]
