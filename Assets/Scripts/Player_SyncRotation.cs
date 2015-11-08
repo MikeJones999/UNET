@@ -18,7 +18,7 @@ public class Player_SyncRotation : NetworkBehaviour
     [SerializeField]
     private Transform camTransform;
    
-    private float lerpRate = 15;
+    private float lerpRate = 20;
 
     //this holds the players last rotation - used to update network only when player has moved 5 degrees.
     //only sending floats - say x of player and y of cam as this saves bandwidth - no need to send quaternions as wholes
@@ -30,7 +30,7 @@ public class Player_SyncRotation : NetworkBehaviour
     //historic rotation for smoother process and appearance
     private List<float> syncPlayPosList = new List<float>();
     private List<float> syncCamPosList = new List<float>();
-    private float closeEnough = 0.5f;
+    private float closeEnough = 0.4f;
     [SerializeField]
     private bool useHistoricalInterpolation;
      
@@ -65,7 +65,7 @@ public class Player_SyncRotation : NetworkBehaviour
             //new method
             if(useHistoricalInterpolation)
             {
-
+                HistoricalInterpolation();
             }
             else
             {
@@ -76,7 +76,30 @@ public class Player_SyncRotation : NetworkBehaviour
         }
     }
 
+    void HistoricalInterpolation()
+    {
+        //firstly , must be historical data in list otherwise skip
+        if(syncPlayPosList.Count > 0)
+        {
+            //interpolate rotation towards the first angle in the list
+            LerpPlayerRotations(syncPlayPosList[0]);
+            //remove entry from the list as player has already rotated there on the client's computer
+            if (Mathf.Abs(playerTransform.localEulerAngles.y - syncPlayPosList[0]) < closeEnough)
+            {
+                syncPlayPosList.RemoveAt(0);
+            }
+        }
 
+        if (syncCamPosList.Count > 0)
+        {
+            LerpCamRotations(syncCamPosList[0]);
+            if (Mathf.Abs(camTransform.localEulerAngles.x - syncCamPosList[0]) < closeEnough)
+            {
+                syncCamPosList.RemoveAt(0);
+            }
+        }
+
+    }
 
     void OrdinaryLerping()
     {
